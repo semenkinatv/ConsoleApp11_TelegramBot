@@ -7,9 +7,9 @@ namespace ConsoleApp11_TelegramBot
 {
     public class Word
     {
-       private string WordRus;
-        private string WordEng;
-        private string WordSubj;
+        public string WordRus;
+        public string WordEng;
+        public string WordSubj;
        
 
         public Word (string wordRus, string wordEng, string wordSubj)

@@ -13,11 +13,14 @@ namespace ConsoleApp11_TelegramBot
 
         private List<Message> telegramMessages;
 
+        private List<Word> listWord;
+
         public Conversation(Chat chat)
         {
             telegramChat = chat;
             telegramMessages = new List<Message>();
-        }
+            listWord = new List<Word>();
+         }
 
         public void AddMessage(Message message)
         {

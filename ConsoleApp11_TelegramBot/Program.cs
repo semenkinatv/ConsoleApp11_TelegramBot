@@ -7,8 +7,9 @@ namespace ConsoleApp11_TelegramBot
     class Program
     {
         static void Main(string[] args)
-        {
-            BotWorker botWorker = new BotWorker();
+        { 
+
+        BotWorker botWorker = new BotWorker();
 
             botWorker.Inizalize();
             //botClient = new TelegramBotClient(BotCredentials.BotToken);

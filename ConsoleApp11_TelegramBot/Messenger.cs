@@ -17,6 +17,7 @@ namespace ConsoleApp11_TelegramBot
                 case "/askme":
                     text = "как дела";
                     break;
+                
                 default:
                     var delimiter = ",";
                     text = "История ваших сообщений: " + string.Join(delimiter, chat.GetTextMessages().ToArray());
