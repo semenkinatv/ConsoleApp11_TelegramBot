@@ -11,5 +11,7 @@ namespace ConsoleApp11_TelegramBot
         public static string WordRus = "";
         public static string WordEng = "";
         public static string WordSubj = "";
+
+        public static string TrainRoute;
     }
 }
