@@ -50,7 +50,19 @@ namespace ConsoleApp11_TelegramBot
         //возвращает последний элемент коллекции telegramMessages
         public string GetLastMessage()
         { return telegramMessages[telegramMessages.Count - 1].Text; }
-                
-        
+
+        //возвращает ПРЕД-последний элемент коллекции telegramMessages
+        public string GetLastLastMessage()
+        {
+            if (telegramMessages.Count > 1)
+            {
+                return telegramMessages[telegramMessages.Count - 2].Text;
+            }
+            else
+            {
+                return "";
+            }
+        }
+
     }
 }

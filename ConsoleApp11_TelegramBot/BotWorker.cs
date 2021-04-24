@@ -18,12 +18,12 @@ namespace ConsoleApp11_TelegramBot
             logic = new BotMessageLogic(botClient);
 
             var me = botClient.GetMeAsync().Result;
-            Console.WriteLine("Привет! Я обучающий робот. Меня зовут {0}", me.FirstName);
+            Console.WriteLine("Привет! Я обучающий робот. Меня зовут {0}. Список возможных команд:", me.FirstName);
             Console.WriteLine("Для добавления слова в словарь введите:  /addword");
             Console.WriteLine("Для удаления слова из словаря введите:   /deleteword");
             Console.WriteLine("Получить список слов словаря введите:    /listwords");
             Console.WriteLine("Для планирования тренировки введите:     /trainplan");
-            Console.WriteLine("Для старта запланированной тренировки:   /trainstart");
+            Console.WriteLine("Для старта запланированной тренировки:   /start");
             Console.WriteLine("Жду Вашу команду...");
         }
 

@@ -29,44 +29,54 @@ namespace ConsoleApp11_TelegramBot
 
             train = new Train();
         }
+        
         //функционал хранения чатов и отправки ответа в чат в зависимости от того, какой это чат        
         public async Task Response(MessageEventArgs e)
         {
-            
-            var Id = e.Message.Chat.Id;
+             var Id = e.Message.Chat.Id;
 
                 if (!chatList.ContainsKey(Id))
                 {
                     var newchat = new Conversation(e.Message.Chat);
-
                     chatList.Add(Id, newchat);
                 }
 
             //добавляем новое сообщение в историю сообщений конкретного чата
             var chat = chatList[Id];
             chat.AddMessage(e.Message);
-
-            
+ 
             //отправляем ответ пользователю
             await SendTextMessage(chat );
-
         }
+
         public async Task SendTextMessage(Conversation chat)
         {
             string text = "";
             var mes = chat.GetLastMessage();
+            var meslast = chat.GetLastLastMessage();
 
-            if (GlobalVar.fProcAddWord == false && mes == "/addword")
+            if (GlobalVar.fProcAddWord == false & train.TrainPlan==false & train.TrainStart == false  & mes == "/addword")
             {
                 GlobalVar.fProcAddWord = true;
                 text = "Введите русское значение слова";
             }
-            else if (GlobalVar.fProcAddWord == false && mes == "/deleteword")
+
+            else if (GlobalVar.fProcAddWord == true & (mes == "/addword" | mes == "/deleteword" | mes == "/trainplan" | mes == "/start"))
+            {
+                text = "Сперва закончите предыдущий ввод слова.";
+            }
+
+            else if (train.TrainPlan == true & (mes == "/addword" | mes == "/deleteword" | mes == "/trainplan" | mes == "/start"))
+            {
+                text = "Сперва закончите планирование тренировки.";
+            }
+
+            else if (GlobalVar.fProcAddWord == false & train.TrainPlan == false & train.TrainStart == false & mes == "/deleteword")
             {
                 GlobalVar.fProcDelWord = true;
                 text = "Введите русское значение слова, которое хотите удалить из словаря.";
             }
-            else if (GlobalVar.fProcAddWord == false && mes == "/listwords")
+            else if (GlobalVar.fProcAddWord == false & train.TrainPlan == false & train.TrainStart == false & mes == "/listwords")
             {
                 foreach (var item in wordList)
                 {
@@ -83,26 +93,63 @@ namespace ConsoleApp11_TelegramBot
                 }
 
             }
-            else if (GlobalVar.fProcAddWord == false && mes == "/trainplan")
+            else if (GlobalVar.fProcAddWord == false & train.TrainPlan == false & train.TrainStart == false & mes == "/trainplan")
             {
-                 text = "Планируем тренировку. Задайте направление перевода: если c Rus на Eng - введите /RusEng, иначе /EngRus";
-
+                text = "Запланируем параметры тренировки:\r\nДля перевода c русского на английский введите /RusEng, иначе /EngRus";
+                train = new Train();
+                train.TrainPlan = true;
             }
-            else if (GlobalVar.fProcAddWord == false && (mes == "/RusEng" || mes == "/EngRus"))
-            {
-                train.SetTrainRoute(mes);
 
-                text = $"Для начала тренировки с направлением {mes} введите  /trainstart";
+            else if (train.TrainPlan = true & (mes == "/RusEng" || mes == "/EngRus"))
+            {
+                train.TrainRoute = mes;
+                text = $"Для тренировки по тематике введите /trainsubj, если по всем словам -  /all";
             }
-            else if (GlobalVar.fProcAddWord == false && mes == "/trainstart")
-            {
-                train.SetTrainStart(true);
 
-                text = train.GetTrainRoute() + " - начинаем....";
+            else if (train.TrainPlan = true & mes == "/trainsubj")
+            {
+                train.TrainType = "Subj";
+                text = "Укажите тематику слов:";
+            }
+
+            else if (train.TrainPlan = true & meslast == "/trainsubj")
+            {
+                train.TrainSubj = mes;
+                train.TrainPlan = false;
+                text = $"Планирование завершено.\r\nЧтоб начать тренировку, введите  /start";
+            }
+
+            else if (train.TrainPlan = true & mes == "/all")
+            {
+                train.TrainPlan = false;
+                text = $"Планирование завершено.\r\nЧтоб начать тренировку, введите  /start";
+            }
+               
+            else if (GlobalVar.fProcAddWord == false & train.TrainPlan == false & train.TrainStart == false & mes == "/start" & wordList.Count == 0)
+            {
+                text = "Ваш словарь пока пуст. Для заполнения его введите  /addword";
+            }
+
+            else if (GlobalVar.fProcAddWord == false & train.TrainPlan == false & train.TrainStart == false & mes == "/start")
+            {
+                train.TrainStart = true;
+                text = "Тренировка начата.\r\nДля завершения введите  /stop";
+                text += "\r\n" + messanger.ExecTrain(ref train, wordList, mes);  //процесс тренировки
+            }
+            
+            else if (train.TrainStart == true & mes != "/stop")
+            {
+                text = messanger.ExecTrain( ref train, wordList, mes);  //идет процесс тренировки
+            }
+            else if (train.TrainStart == true & mes == "/stop")
+            {
+                train.TrainStart = false; //останавливаем тренировку
+                text = "Тренировка завершена.";
             }
 
             else if (GlobalVar.fProcDelWord == true)
             {
+                //Блок по удалению заданного слова из словаря
                 var delWord = mes;
                 var numList = -1;
                 int delItem = -1;
@@ -127,18 +174,18 @@ namespace ConsoleApp11_TelegramBot
                 GlobalVar.fProcDelWord = false;
 
             }
-            else if (GlobalVar.fProcAddWord == true && GlobalVar.WordRus == "")
+            else if (GlobalVar.fProcAddWord == true & GlobalVar.WordRus == "")
             {
                 GlobalVar.WordRus = mes;
                 text = "Введите английское значение слова";
 
             }
-            else if (GlobalVar.fProcAddWord == true && GlobalVar.WordRus != "" && GlobalVar.WordEng == "")
+            else if (GlobalVar.fProcAddWord == true & GlobalVar.WordRus != "" & GlobalVar.WordEng == "")
             {
                 GlobalVar.WordEng = mes;
                 text = "Введите тематику";
             }
-            else if (GlobalVar.fProcAddWord = true && GlobalVar.WordRus != "" && GlobalVar.WordEng != "" && GlobalVar.WordSubj == "")
+            else if (GlobalVar.fProcAddWord = true & GlobalVar.WordRus != "" & GlobalVar.WordEng != "" & GlobalVar.WordSubj == "")
             {
                 GlobalVar.WordSubj = mes;
 
