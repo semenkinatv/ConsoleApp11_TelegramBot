@@ -11,6 +11,12 @@ namespace ConsoleApp11_TelegramBot
         public string WordEng;
         public string WordSubj;
        
+        public Word()
+        {
+            WordRus = "";
+            WordEng = "";
+            WordSubj = "";
+        }
 
         public Word (string wordRus, string wordEng, string wordSubj)
         {

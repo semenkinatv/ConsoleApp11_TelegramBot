@@ -8,25 +8,20 @@ using Telegram.Bot.Args;
 namespace ConsoleApp11_TelegramBot
 {
     public class BotMessageLogic
-    {//управлять логикой обработки полученных сообщений 
+    {   //управлять логикой обработки полученных сообщений 
         private Messenger messanger;
         private Dictionary<long, Conversation> chatList;
         private ITelegramBotClient botClient;
-
-        //private Dictionary<long, List<Word>> chatWordList;
-       // private Dictionary<long, Word> chatWordList;
-
-        private List<Word> wordList ;
+        private List<Word> wordList;
         private Train train;
-
+        
         public BotMessageLogic(ITelegramBotClient botClient)
         {
             messanger = new Messenger();
             chatList = new Dictionary<long, Conversation>();
             this.botClient = botClient;
-            wordList = new List<Word>();
-            // chatWordList = new Dictionary<long, List<Word>>();
-
+           
+            wordList = new List<Word>(); 
             train = new Train();
         }
         
@@ -44,7 +39,7 @@ namespace ConsoleApp11_TelegramBot
             //добавляем новое сообщение в историю сообщений конкретного чата
             var chat = chatList[Id];
             chat.AddMessage(e.Message);
- 
+
             //отправляем ответ пользователю
             await SendTextMessage(chat );
         }
@@ -59,6 +54,30 @@ namespace ConsoleApp11_TelegramBot
             {
                 GlobalVar.fProcAddWord = true;
                 text = "Введите русское значение слова";
+            }
+            else if (GlobalVar.fProcAddWord == true & GlobalVar.WordRus == "")
+            {
+                GlobalVar.WordRus = mes;
+                text = "Введите английское значение слова";
+
+            }
+            else if (GlobalVar.fProcAddWord == true & GlobalVar.WordRus != "" & GlobalVar.WordEng == "")
+            {
+                GlobalVar.WordEng = mes;
+                text = "Введите тематику";
+            }
+            else if (GlobalVar.fProcAddWord = true & GlobalVar.WordRus != "" & GlobalVar.WordEng != "" & GlobalVar.WordSubj == "")
+            {
+                GlobalVar.WordSubj = mes;
+
+                Word word = new Word(GlobalVar.WordRus, GlobalVar.WordEng, GlobalVar.WordSubj);
+                wordList.Add(word);
+                
+                text = $"Успешно! Слово {word.WordRus} /{word.WordEng} /{word.WordSubj} добавлено в словарь.";
+                GlobalVar.fProcAddWord = false;
+                GlobalVar.WordRus = "";
+                GlobalVar.WordEng = "";
+                GlobalVar.WordSubj = "";
             }
 
             else if (GlobalVar.fProcAddWord == true & (mes == "/addword" | mes == "/deleteword" | mes == "/trainplan" | mes == "/start"))
@@ -124,7 +143,7 @@ namespace ConsoleApp11_TelegramBot
                 train.TrainPlan = false;
                 text = $"Планирование завершено.\r\nЧтоб начать тренировку, введите  /start";
             }
-               
+
             else if (GlobalVar.fProcAddWord == false & train.TrainPlan == false & train.TrainStart == false & mes == "/start" & wordList.Count == 0)
             {
                 text = "Ваш словарь пока пуст. Для заполнения его введите  /addword";
@@ -174,31 +193,7 @@ namespace ConsoleApp11_TelegramBot
                 GlobalVar.fProcDelWord = false;
 
             }
-            else if (GlobalVar.fProcAddWord == true & GlobalVar.WordRus == "")
-            {
-                GlobalVar.WordRus = mes;
-                text = "Введите английское значение слова";
-
-            }
-            else if (GlobalVar.fProcAddWord == true & GlobalVar.WordRus != "" & GlobalVar.WordEng == "")
-            {
-                GlobalVar.WordEng = mes;
-                text = "Введите тематику";
-            }
-            else if (GlobalVar.fProcAddWord = true & GlobalVar.WordRus != "" & GlobalVar.WordEng != "" & GlobalVar.WordSubj == "")
-            {
-                GlobalVar.WordSubj = mes;
-
-                Word word = new Word(GlobalVar.WordRus, GlobalVar.WordEng, GlobalVar.WordSubj);
-                wordList.Add(word);
-                // chatWordList.Add(chat.GetId(), wordList);
-
-                text = $"Успешно! Слово {word.WordRus} {word.WordEng} {word.WordSubj} добавлено в словарь.";
-                GlobalVar.fProcAddWord = false;
-                GlobalVar.WordRus = "";
-                GlobalVar.WordEng = "";
-                GlobalVar.WordSubj = "";
-            }
+           
             else
             {
                 text = messanger.CreateTextMessage(chat);

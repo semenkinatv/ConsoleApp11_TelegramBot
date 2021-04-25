@@ -57,7 +57,7 @@ namespace ConsoleApp11_TelegramBot
             //проверяем перевод в зависимости от направления
             if (train.TrainRoute == "RusEng")
             {
-                if (word.WordEng == mes)
+                if (word.WordEng.ToLower() == mes.ToLower())
                 { text = "Верно!"; }
                 else
                 { text = $"Не верно, правильно: {word.WordEng}"; }
@@ -66,7 +66,7 @@ namespace ConsoleApp11_TelegramBot
             }
             else
             {
-                if (word.WordRus == mes)
+                if (word.WordRus.ToLower() == mes.ToLower())
                 { text = "Верно!"; }
                 else
                 { text = $"Не верно, правильно: {word.WordRus}"; }

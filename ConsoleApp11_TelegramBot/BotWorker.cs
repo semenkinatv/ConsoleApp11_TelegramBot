@@ -24,6 +24,7 @@ namespace ConsoleApp11_TelegramBot
             Console.WriteLine("Получить список слов словаря введите:    /listwords");
             Console.WriteLine("Для планирования тренировки введите:     /trainplan");
             Console.WriteLine("Для старта запланированной тренировки:   /start");
+            Console.WriteLine("Для завершения тренировки:   /stop");
             Console.WriteLine("Жду Вашу команду...");
         }
 
@@ -45,8 +46,8 @@ namespace ConsoleApp11_TelegramBot
             {
                 //Console.WriteLine($"Получено сообщение в чате: {e.Message.Chat.Id}.");
 
-                //await botClient.SendTextMessageAsync(
-                //chatId: e.Message.Chat, text: "Вы написали:\n" + e.Message.Text);
+                //await botClient.SendTextMessageAsync(chatId: e.Message.Chat, text: "Вы написали:\n" + e.Message.Text);
+
                 await logic.Response(e);
             }
         }
