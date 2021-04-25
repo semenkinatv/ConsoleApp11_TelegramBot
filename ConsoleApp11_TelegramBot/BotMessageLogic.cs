@@ -95,7 +95,7 @@ namespace ConsoleApp11_TelegramBot
                 GlobalVar.fProcDelWord = true;
                 text = "Введите русское значение слова, которое хотите удалить из словаря.";
             }
-            else if (GlobalVar.fProcAddWord == false & train.TrainPlan == false & train.TrainStart == false & mes == "/listwords")
+            else if (GlobalVar.fProcAddWord == false & train.TrainPlan == false & train.TrainStart == false & mes == "/dictionary")
             {
                 foreach (var item in wordList)
                 {
